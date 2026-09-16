@@ -27,6 +27,6 @@ test("GET /api/health/db reports unconfigured development database safely", asyn
     const response = await fetch(`http://127.0.0.1:${port}/api/health/db`);
     const body = await response.json();
     assert.equal(response.status, 503);
-    assert.equal(body.configured, false);
+    assert.deepEqual(body, { status: "error", database: "unavailable" });
   });
 });

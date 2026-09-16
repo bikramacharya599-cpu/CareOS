@@ -4,20 +4,22 @@ const config = require("./env");
 const pool = config.databaseUrl
   ? new Pool({
       connectionString: config.databaseUrl,
-      ssl: config.databaseSsl ? { rejectUnauthorized: false } : false,
+      ssl: config.databaseSsl
+        ? { rejectUnauthorized: config.databaseSslRejectUnauthorized }
+        : false,
     })
   : null;
 
 async function checkDatabaseHealth() {
   if (!pool) {
-    return { ok: false, configured: false, message: "DATABASE_URL is not configured." };
+    return { ok: false, configured: false };
   }
 
   try {
     await pool.query("SELECT 1");
-    return { ok: true, configured: true, message: "PostgreSQL connection is healthy." };
+    return { ok: true, configured: true };
   } catch (error) {
-    return { ok: false, configured: true, message: "PostgreSQL connection failed." };
+    return { ok: false, configured: true };
   }
 }
 

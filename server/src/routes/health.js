@@ -10,7 +10,10 @@ router.get("/", (req, res) => {
 router.get("/db", async (req, res, next) => {
   try {
     const health = await checkDatabaseHealth();
-    res.status(health.ok ? 200 : 503).json({ service: "careos-postgresql", ...health, timestamp: new Date().toISOString() });
+    res.status(health.ok ? 200 : 503).json({
+      status: health.ok ? "ok" : "error",
+      database: health.ok ? "connected" : "unavailable",
+    });
   } catch (error) {
     next(error);
   }
