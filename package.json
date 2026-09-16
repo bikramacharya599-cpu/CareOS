@@ -8,7 +8,9 @@
     "preview": "vite preview",
     "server:dev": "node --watch server/src/server.js",
     "server:start": "node server/src/server.js",
-    "server:test": "node --test server/test/health.test.js"
+    "server:test": "node --test server/test/health.test.js server/test/migrator.test.js",
+    "db:migrate": "node server/scripts/migrate.js",
+    "db:status": "node server/scripts/migrate.js --status"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

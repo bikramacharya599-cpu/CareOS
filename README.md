@@ -119,4 +119,18 @@ npm run server:test
 npm run build
 ```
 
+### Database migrations
+
+The version-controlled migration system lives in `server/migrations`. It uses a `schema_migrations` table, applies migrations in filename order inside a transaction, and skips versions already recorded as applied. It does not run automatically when the API starts.
+
+```bash
+# Show pending/applied migration status
+npm run db:status
+
+# Apply pending migrations
+npm run db:migrate
+```
+
+Both commands require `DATABASE_URL`. Do not run `npm run db:migrate` against the Render UAT/production database during this development phase. The migration is designed not to drop existing tables or data, but execution still requires an explicit database change review.
+
 Do not place database passwords, API keys, PHI, or production credentials in source code. PostgreSQL must remain server-side and must never be exposed directly to the browser. CareOS is not currently HIPAA compliant or connected to Medicaid, Sandata, Xoomia, ADP, or payer systems.
