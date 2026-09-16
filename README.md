@@ -51,3 +51,72 @@ The service layer exposes `employeeService`, `clientService`, `scheduleService`,
 ## Future backend
 
 The next production-style phase should introduce a secure API and database behind the existing service interfaces, with authentication, authorization, validation, observability, backups, retention controls, vendor agreements, and compliance review. Real integrations and production data are intentionally out of scope for this phase.
+
+## Phase 2 backend foundation
+
+The backend lives in `/server` and follows this boundary:
+
+```text
+CareOS React frontend -> Express REST API -> PostgreSQL
+```
+
+### Backend structure
+
+```text
+server/
+	migrations/001_initial_schema.sql
+	src/
+		app.js
+		server.js
+		config/env.js
+		config/database.js
+		middleware/errorHandler.js
+		routes/health.js
+		routes/index.js
+	test/health.test.js
+```
+
+The initial migration defines UUID-based tables for users, employees, clients, credentials, training records, authorizations, services, care-plan tasks, assignments, shifts, EVV visits, visit tasks, documentation, EVV exceptions, incidents, billing records, audit findings, and audit logs. It is schema-only: the current React demo does not read or write PostgreSQL.
+
+### Run the frontend
+
+```bash
+npm install
+npm run dev
+```
+
+The frontend runs on `http://localhost:5173`.
+
+### Run the backend
+
+Copy `.env.example` to `.env` and set development-only PostgreSQL values, then run:
+
+```bash
+npm run server:dev
+```
+
+Or run the production-style Node entrypoint:
+
+```bash
+npm run server:start
+```
+
+The API runs on `http://localhost:3001` by default.
+
+Health checks:
+
+```text
+GET /api/health       API process health
+GET /api/health/db    PostgreSQL connectivity health
+```
+
+Without `DATABASE_URL`, the API still starts and `/api/health` works; `/api/health/db` reports an unconfigured database with HTTP `503`. The resource routes are intentionally placeholders until secure authorization and persistence work is approved.
+
+### Run tests and build
+
+```bash
+npm run server:test
+npm run build
+```
+
+Do not place database passwords, API keys, PHI, or production credentials in source code. PostgreSQL must remain server-side and must never be exposed directly to the browser. CareOS is not currently HIPAA compliant or connected to Medicaid, Sandata, Xoomia, ADP, or payer systems.
